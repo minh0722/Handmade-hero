@@ -1,12 +1,14 @@
 @echo off
 
-mkdir ..\build
+REM setup the vcvarsall for cl.exe
+call ../misc/shell.bat
 
+mkdir ..\build
 REM go to build folder
 pushd ..\build
 
-REM build the code
+REM compiling
 cl  -Zi ..\code\win32_handmade.cpp user32.lib Gdi32.lib
 
-REM go back to the previous folder
+REM go back to code\
 popd
