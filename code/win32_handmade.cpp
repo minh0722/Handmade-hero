@@ -24,6 +24,7 @@ LRESULT CALLBACK MainWindowCallback(
 
 		case WM_CLOSE:
 		{
+			PostQuitMessage(0);
 			OutputDebugStringA("WM_CLOSEAPP\n");
 		} break;
 
@@ -59,11 +60,7 @@ LRESULT CALLBACK MainWindowCallback(
 	return result;
 }
 
-int CALLBACK WinMain(
-	HINSTANCE Instance,
-	HINSTANCE PrevInstance,
-	LPSTR CommandLine,
-	int ShowCode)
+int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLine, int ShowCode)
 {
 	WNDCLASS windowClass = {};
 	
@@ -77,7 +74,7 @@ int CALLBACK WinMain(
 	// register window class before creating the window
 	if (RegisterClass(&windowClass))
 	{
-		HWND windowHandle = CreateWindowEx(
+		HWND windowHandle = CreateWindowExA(
 			0,
 			windowClass.lpszClassName,
 			"Handmade Hero",
@@ -98,7 +95,7 @@ int CALLBACK WinMain(
 			
 			for (;;)
 			{
-				BOOL messageResult = GetMessage(&message, 0, 0, 0);
+				BOOL messageResult = GetMessageA(&message, 0, 0, 0);
 				if (messageResult > 0)
 				{
 					TranslateMessage(&message);
