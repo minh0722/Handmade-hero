@@ -1,7 +1,9 @@
 @echo off
 
 REM setup the vcvarsall for cl.exe
-call ../misc/shell.bat
+if not defined DevEnvDir (
+    call ../misc/shell.bat
+)
 
 mkdir ..\build
 REM go to build folder
