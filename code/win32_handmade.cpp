@@ -1,8 +1,12 @@
 #include <windows.h>
 #include <cstdio>
 
+#define internal static		// for static function
+#define local_persist static
+#define global_variable static
+
 //TODO: global for now
-static bool running;
+global_variable bool running;
 
 LRESULT CALLBACK MainWindowCallback(
 	HWND window,
@@ -48,7 +52,7 @@ LRESULT CALLBACK MainWindowCallback(
 			int height = paint.rcPaint.bottom - paint.rcPaint.top;
 			int width = paint.rcPaint.right - paint.rcPaint.left;
 
-			static DWORD operation = WHITENESS;
+			local_persist DWORD operation = WHITENESS;
 			PatBlt(deviceContext, x, y, width, height, operation);
 
 			EndPaint(window, &paint);
