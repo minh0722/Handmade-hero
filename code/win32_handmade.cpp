@@ -1,6 +1,9 @@
 #include <windows.h>
 #include <cstdio>
 
+//TODO: global for now
+static bool running;
+
 LRESULT CALLBACK MainWindowCallback(
 	HWND window,
 	UINT message,
@@ -19,13 +22,14 @@ LRESULT CALLBACK MainWindowCallback(
 
 		case WM_DESTROY:
 		{
-			OutputDebugStringA("WM_DESTROY\n");
+			// TODO: handle this as an error - recreate window?
+			running = false;
 		} break;
 
 		case WM_CLOSE:
 		{
-			PostQuitMessage(0);
-			OutputDebugStringA("WM_CLOSEAPP\n");
+			// TODO: handle this with a message to the user? because we may want to close just an internal window in the game
+			running = false;
 		} break;
 
 		// when window becomes the active window
@@ -93,7 +97,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 			// start message loop
 			MSG message;
 			
-			for (;;)
+			while (running)
 			{
 				BOOL messageResult = GetMessageA(&message, 0, 0, 0);
 				if (messageResult > 0)
