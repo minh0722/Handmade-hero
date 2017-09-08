@@ -96,7 +96,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 		{
 			// start message loop
 			MSG message;
-			
+			running = true;
 			while (running)
 			{
 				BOOL messageResult = GetMessageA(&message, 0, 0, 0);
