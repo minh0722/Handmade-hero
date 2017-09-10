@@ -1,2 +1,3 @@
 Day 3:
 - when we call PostQuitMessage(errorCode) it sends the WM_QUIT message to the message loop and message processing should terminate. We can handle the WM_QUIT message before the loop stops
+- GDI - windows graphics api

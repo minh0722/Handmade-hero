@@ -7,8 +7,54 @@
 
 //TODO: global for now
 global_variable bool running;
+global_variable BITMAPINFO bitmapInfo;
+global_variable void* bitmapMemory;
+global_variable HBITMAP bitmapHandle;
+global_variable HDC bitmapDeviceContext;
 
-LRESULT CALLBACK MainWindowCallback(
+internal void Win32ResizeDIBSection(int width, int height)
+{
+	if (bitmapHandle)
+	{
+		DeleteObject(bitmapHandle);
+	}
+	if(!bitmapDeviceContext)
+	{
+		// TODO: should we recreate these under certain special circumstances
+		bitmapDeviceContext = CreateCompatibleDC(0);
+	}
+
+	bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
+	bitmapInfo.bmiHeader.biWidth = width;
+	bitmapInfo.bmiHeader.biHeight = height;
+	bitmapInfo.bmiHeader.biPlanes = 1;
+	bitmapInfo.bmiHeader.biBitCount = 32;		// bits per pixel
+	bitmapInfo.bmiHeader.biCompression = BI_RGB;		// uncompressed
+	
+	// create the new buffer
+	bitmapHandle = CreateDIBSection(
+		bitmapDeviceContext,
+		&bitmapInfo,
+		DIB_RGB_COLORS,
+		&bitmapMemory,
+		nullptr,
+		0);
+
+
+}
+
+internal void Win32UpdateWindow(HDC deviceContext, int x, int y, int width, int height)
+{
+	StretchDIBits(deviceContext,
+		x, y, width, height,
+		x, y, width, height,
+		&bitmapMemory,
+		&bitmapInfo,
+		DIB_RGB_COLORS,
+		SRCCOPY);
+}
+
+LRESULT CALLBACK Win32MainWindowCallback(
 	HWND window,
 	UINT message,
 	WPARAM wParam,
@@ -21,6 +67,14 @@ LRESULT CALLBACK MainWindowCallback(
 		// when window is resized
 		case WM_SIZE:
 		{
+			// get rect of the window excluding the borders
+			RECT clientRect;
+			GetClientRect(window, &clientRect);
+			int width = clientRect.right - clientRect.left;
+			int height = clientRect.bottom - clientRect.top;
+
+			Win32ResizeDIBSection(width, height);
+
 			OutputDebugStringA("WM_SIZE\n");
 		} break;
 
@@ -51,10 +105,8 @@ LRESULT CALLBACK MainWindowCallback(
 			int y = paint.rcPaint.top;
 			int height = paint.rcPaint.bottom - paint.rcPaint.top;
 			int width = paint.rcPaint.right - paint.rcPaint.left;
-
-			local_persist DWORD operation = WHITENESS;
-			PatBlt(deviceContext, x, y, width, height, operation);
-
+			Win32UpdateWindow(deviceContext, x, y, width, height);
+			
 			EndPaint(window, &paint);
 		} break;
 
@@ -74,7 +126,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 	
 	// TODO: Check if these flags still matter
 	windowClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-	windowClass.lpfnWndProc = MainWindowCallback;
+	windowClass.lpfnWndProc = Win32MainWindowCallback;
 	windowClass.hInstance = Instance; // or GetModuleHandle(0);
 	//windowClass.hIcon;
 	windowClass.lpszClassName = "HandmadeHeroWindowClass";
