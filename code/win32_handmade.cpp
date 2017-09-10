@@ -9,46 +9,44 @@
 global_variable bool running;
 global_variable BITMAPINFO bitmapInfo;
 global_variable void* bitmapMemory;
-global_variable HBITMAP bitmapHandle;
-global_variable HDC bitmapDeviceContext;
+global_variable int bitmapWidth;
+global_variable int bitmapHeight;
 
 internal void Win32ResizeDIBSection(int width, int height)
 {
-	if (bitmapHandle)
+	if (bitmapMemory)
 	{
-		DeleteObject(bitmapHandle);
-	}
-	if(!bitmapDeviceContext)
-	{
-		// TODO: should we recreate these under certain special circumstances (unplug monitor, etc.)
-		bitmapDeviceContext = CreateCompatibleDC(0);
+		VirtualFree(bitmapMemory, 0, MEM_RELEASE);
 	}
 
+	bitmapWidth = width;
+	bitmapHeight = height;
+
 	bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
-	bitmapInfo.bmiHeader.biWidth = width;
-	bitmapInfo.bmiHeader.biHeight = height;
+	bitmapInfo.bmiHeader.biWidth = bitmapWidth;
+	bitmapInfo.bmiHeader.biHeight = bitmapHeight;
 	bitmapInfo.bmiHeader.biPlanes = 1;
 	bitmapInfo.bmiHeader.biBitCount = 32;				// bits per pixel
 	bitmapInfo.bmiHeader.biCompression = BI_RGB;		// uncompressed
 	
-	// TODO: allocate this ourselves?
-	// create the new buffer
-	bitmapHandle = CreateDIBSection(
-		bitmapDeviceContext,
-		&bitmapInfo,
-		DIB_RGB_COLORS,
-		&bitmapMemory,
-		nullptr,
-		0);
+	// NOTE: no more DC. We can allocate memory ourselves
+	int bytesPerPixel = 4;
+	int bitmapMemorySize = (width * height) * bytesPerPixel;
+	bitmapMemory = VirtualAlloc(nullptr, bitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
 
 
 }
 
-internal void Win32UpdateWindow(HDC deviceContext, int x, int y, int width, int height)
+internal void Win32UpdateWindow(HDC deviceContext, RECT* windowRect, int x, int y, int width, int height)
 {
+	int windowWidth = windowRect->right = windowRect->left;
+	int windowHeight = windowRect->bottom - windowRect->top;
+
 	StretchDIBits(deviceContext,
-		x, y, width, height,
-		x, y, width, height,
+		/*x, y, width, height,
+		x, y, width, height,*/
+		0, 0, bitmapWidth, bitmapHeight,
+		0, 0, windowWidth, windowHeight,
 		&bitmapMemory,
 		&bitmapInfo,
 		DIB_RGB_COLORS,
