@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <cstdio>
 
-#define internal static		// for static function
+#define internal static
 #define local_persist static
 #define global_variable static
 
@@ -20,7 +20,7 @@ internal void Win32ResizeDIBSection(int width, int height)
 	}
 	if(!bitmapDeviceContext)
 	{
-		// TODO: should we recreate these under certain special circumstances
+		// TODO: should we recreate these under certain special circumstances (unplug monitor, etc.)
 		bitmapDeviceContext = CreateCompatibleDC(0);
 	}
 
@@ -28,9 +28,10 @@ internal void Win32ResizeDIBSection(int width, int height)
 	bitmapInfo.bmiHeader.biWidth = width;
 	bitmapInfo.bmiHeader.biHeight = height;
 	bitmapInfo.bmiHeader.biPlanes = 1;
-	bitmapInfo.bmiHeader.biBitCount = 32;		// bits per pixel
+	bitmapInfo.bmiHeader.biBitCount = 32;				// bits per pixel
 	bitmapInfo.bmiHeader.biCompression = BI_RGB;		// uncompressed
 	
+	// TODO: allocate this ourselves?
 	// create the new buffer
 	bitmapHandle = CreateDIBSection(
 		bitmapDeviceContext,
@@ -74,8 +75,6 @@ LRESULT CALLBACK Win32MainWindowCallback(
 			int height = clientRect.bottom - clientRect.top;
 
 			Win32ResizeDIBSection(width, height);
-
-			OutputDebugStringA("WM_SIZE\n");
 		} break;
 
 		case WM_DESTROY:
