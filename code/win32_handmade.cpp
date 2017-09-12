@@ -1,9 +1,15 @@
 #include <windows.h>
 #include <cstdio>
+#include <stdint.h>
 
 #define internal static
 #define local_persist static
 #define global_variable static
+
+typedef uint8_t uint8;
+typedef uint16_t uint16;
+typedef uint32_t uint32;
+typedef uint64_t uint64;
 
 //TODO: global for now
 global_variable bool running;
@@ -24,7 +30,7 @@ internal void Win32ResizeDIBSection(int width, int height)
 
 	bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
 	bitmapInfo.bmiHeader.biWidth = bitmapWidth;
-	bitmapInfo.bmiHeader.biHeight = bitmapHeight;
+	bitmapInfo.bmiHeader.biHeight = -bitmapHeight;		// use a top-down DIB
 	bitmapInfo.bmiHeader.biPlanes = 1;
 	bitmapInfo.bmiHeader.biBitCount = 32;				// bits per pixel
 	bitmapInfo.bmiHeader.biCompression = BI_RGB;		// uncompressed
@@ -34,15 +40,38 @@ internal void Win32ResizeDIBSection(int width, int height)
 	int bitmapMemorySize = (width * height) * bytesPerPixel;
 	bitmapMemory = VirtualAlloc(nullptr, bitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
 
+	int pitch = width * bytesPerPixel;
+	uint8* row = (uint8*)bitmapMemory;
+	for (int y = 0; y < bitmapHeight; ++y)
+	{
+		uint8* pixel = (uint8*)row;
+		for (int x = 0; x < bitmapWidth; ++x)
+		{
+			/*
+			pixel in memory: rr gg bb xx
+			*/
+			*pixel = 255;
+			++pixel;
 
+			*pixel = 0;
+			++pixel;
+
+			*pixel = 0;
+			++pixel;
+
+			*pixel = 0;
+			++pixel;
+		}
+		row += pitch;
+	}
 }
 
 internal void Win32UpdateWindow(HDC deviceContext, RECT* windowRect, int x, int y, int width, int height)
 {
-	int windowWidth = windowRect->right = windowRect->left;
+	int windowWidth = windowRect->right - windowRect->left;
 	int windowHeight = windowRect->bottom - windowRect->top;
 
-	StretchDIBits(deviceContext,
+	int cnt = StretchDIBits(deviceContext,
 		/*x, y, width, height,
 		x, y, width, height,*/
 		0, 0, bitmapWidth, bitmapHeight,
@@ -71,6 +100,20 @@ LRESULT CALLBACK Win32MainWindowCallback(
 			GetClientRect(window, &clientRect);
 			int width = clientRect.right - clientRect.left;
 			int height = clientRect.bottom - clientRect.top;
+
+			char buf[256];
+			sprintf(buf, "x: %d\n", clientRect.left);
+			OutputDebugStringA(buf);
+
+			sprintf(buf, "y: %d\n", clientRect.top);
+			OutputDebugStringA(buf);
+
+			sprintf(buf, "width: %d\n", width);
+			OutputDebugStringA(buf);
+
+			sprintf(buf, "height: %d\n", height);
+			OutputDebugStringA(buf);
+
 
 			Win32ResizeDIBSection(width, height);
 		} break;
@@ -102,7 +145,11 @@ LRESULT CALLBACK Win32MainWindowCallback(
 			int y = paint.rcPaint.top;
 			int height = paint.rcPaint.bottom - paint.rcPaint.top;
 			int width = paint.rcPaint.right - paint.rcPaint.left;
-			Win32UpdateWindow(deviceContext, x, y, width, height);
+
+			RECT clientRect;
+			GetClientRect(window, &clientRect);
+			
+			Win32UpdateWindow(deviceContext, &clientRect, x, y, width, height);
 			
 			EndPaint(window, &paint);
 		} break;
