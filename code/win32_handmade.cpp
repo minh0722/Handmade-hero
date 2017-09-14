@@ -76,7 +76,7 @@ internal void Win32UpdateWindow(HDC deviceContext, RECT* windowRect, int x, int 
 		x, y, width, height,*/
 		0, 0, bitmapWidth, bitmapHeight,
 		0, 0, windowWidth, windowHeight,
-		&bitmapMemory,
+		bitmapMemory,
 		&bitmapInfo,
 		DIB_RGB_COLORS,
 		SRCCOPY);
