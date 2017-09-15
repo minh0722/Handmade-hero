@@ -6,11 +6,13 @@ if not defined DevEnvDir (
 )
 
 mkdir ..\build
-REM go to build folder
 pushd ..\build
 
 REM compiling
 cl -FC -Zi ..\code\win32_handmade.cpp user32.lib Gdi32.lib
 
-REM go back to code\
+if %ERRORLEVEL% == 0 (
+	echo Build done!
+)
+
 popd

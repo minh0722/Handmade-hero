@@ -1,0 +1,58 @@
+<UserSettings>
+	<ApplicationIdentity version="15.0"/>
+	<ToolsOptions/>
+	<Category name="Environment_Group" RegisteredName="Environment_Group">
+		<Category name="Environment_ExternalTools" Category="{E8FAE9E8-FBA2-4474-B134-AB0FFCFB291D}" Package="{DA9FB551-C724-11d0-AE1F-00A0C90FFFC3}" RegisteredName="Environment_ExternalTools" PackageName="Visual Studio Environment Package">
+			<ExternalTools>
+				<UserCreatedTool>
+					<Arguments/>
+					<CloseOnExit>true</CloseOnExit>
+					<Command>%vsspv_windows_sdk_dir%\bin\NETFX 4.5.1 Tools\ildasm.exe</Command>
+					<Index>3</Index>
+					<InitialDirectory>$(targetdir)</InitialDirectory>
+					<IsGUIapp>false</IsGUIapp>
+					<NameID>0</NameID>
+					<Package>{00000000-0000-0000-0000-000000000000}</Package>
+					<PromptForArguments>false</PromptForArguments>
+					<SaveAllDocs>true</SaveAllDocs>
+					<Title>ILDasm</Title>
+					<Unicode>false</Unicode>
+					<UseOutputWindow>false</UseOutputWindow>
+					<UseTaskList>false</UseTaskList>
+				</UserCreatedTool>
+				<UserCreatedTool>
+					<Arguments>/K "vsdevcmd.bat -no_logo"</Arguments>
+					<CloseOnExit>true</CloseOnExit>
+					<Command>%systemroot%\system32\cmd.exe</Command>
+					<Index>4</Index>
+					<InitialDirectory>%vsspv_vs_install_directory%\Common7\Tools</InitialDirectory>
+					<IsGUIapp>false</IsGUIapp>
+					<NameID>10053</NameID>
+					<Package>{F1C25864-3097-11D2-A5C5-00C04F7968B4}</Package>
+					<PromptForArguments>false</PromptForArguments>
+					<SaveAllDocs>true</SaveAllDocs>
+					<Title>Visual Studio &amp;Command Prompt</Title>
+					<Unicode>false</Unicode>
+					<UseOutputWindow>false</UseOutputWindow>
+					<UseTaskList>false</UseTaskList>
+				</UserCreatedTool>
+				<UserCreatedTool>
+					<Arguments/>
+					<CloseOnExit>true</CloseOnExit>
+					<Command>$(ProjectDir)..\code\build.bat</Command>
+					<Index>5</Index>
+					<InitialDirectory>$(ProjectDir)..\code</InitialDirectory>
+					<IsGUIapp>false</IsGUIapp>
+					<NameID>0</NameID>
+					<Package>{00000000-0000-0000-0000-000000000000}</Package>
+					<PromptForArguments>false</PromptForArguments>
+					<SaveAllDocs>true</SaveAllDocs>
+					<Title>Handmade Build</Title>
+					<Unicode>false</Unicode>
+					<UseOutputWindow>true</UseOutputWindow>
+					<UseTaskList>false</UseTaskList>
+				</UserCreatedTool>
+			</ExternalTools>
+		</Category>
+	</Category>
+</UserSettings>
