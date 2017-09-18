@@ -95,7 +95,7 @@ internal void Win32DisplayBufferInWindow(HDC deviceContext,
 										 int x, int y, int width, int height)
 {
 	// TODO: aspect ratio correction
-	int cnt = StretchDIBits(deviceContext,
+	StretchDIBits(deviceContext,
 		/*x, y, width, height,
 		x, y, width, height,*/
 		0, 0, windowWidth, windowHeight,
