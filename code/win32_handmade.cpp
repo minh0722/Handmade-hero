@@ -19,7 +19,6 @@ struct win32_offscreen_buffer
 	int width;
 	int height;
 	int pitch;
-	int bytesPerPixel;
 };
 
 struct win32_window_dimension
@@ -72,7 +71,7 @@ internal void Win32ResizeDIBSection(win32_offscreen_buffer* buffer, int width, i
 
 	buffer->width = width;
 	buffer->height = height;
-	buffer->bytesPerPixel = 4;
+	int bytesPerPixel = 4;
 
 	buffer->info.bmiHeader.biSize = sizeof(buffer->info.bmiHeader);
 	buffer->info.bmiHeader.biWidth = width;
@@ -82,9 +81,9 @@ internal void Win32ResizeDIBSection(win32_offscreen_buffer* buffer, int width, i
 	buffer->info.bmiHeader.biCompression = BI_RGB;		// uncompressed
 	
 	// NOTE: no more DC. We can allocate memory ourselves
-	int bitmapMemorySize = (buffer->width * buffer->height) * buffer->bytesPerPixel;
+	int bitmapMemorySize = (buffer->width * buffer->height) * bytesPerPixel;
 	buffer->memory = VirtualAlloc(nullptr, bitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
-	buffer->pitch = width * buffer->bytesPerPixel;
+	buffer->pitch = width * bytesPerPixel;
 
 	// TODO: clear to black
 }
