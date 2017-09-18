@@ -12,3 +12,12 @@ Day 5:
 - the callback and hInstance is passed to the window class. Windows needs to know which process is holding the function, because that function is in the process's addess space. Every process's address space is different so every pointer does not uniquely identify memory in the system, but in the process. So without the process handle windows will not know which process called the callback. So the hInstance is the actual process that contains the callback address.
 
 - the WM_PAINT message is sent from windows when it needs to repaint the window in situations like moving the window down and part of it is obscure and move it back up, windows remembers the obscrured region of the window and it send to our program the message to repaint it. And in the WM_PAINT we need to at least handle the message with BeginPaint() and EndPaint() so that windows know that we handled the repaint message. If we dont handle it at least in that way, it will keep sending the WM_PAINT message until we do and it will flood the message queue.
+
+- pointer aliasing is when two pointers COULD point to the same memory and the compiler doesn't know if a write to one of those pointers might affect a read from the other pointer
+
+void Move(int* a, int* b, int* c, int* d)
+{
+    *a = *b;    // load from b
+    *d = 5;	// d might point to b
+    *c = *b;    // it must load b again because of the last line
+}
