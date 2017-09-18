@@ -62,10 +62,10 @@ internal void Win32ResizeDIBSection(int width, int height)
 	// TODO: clear to black
 }
 
-internal void Win32UpdateWindow(HDC deviceContext, RECT* windowRect, int x, int y, int width, int height)
+internal void Win32UpdateWindow(HDC deviceContext, RECT windowRect, int x, int y, int width, int height)
 {
-	int windowWidth = windowRect->right - windowRect->left;
-	int windowHeight = windowRect->bottom - windowRect->top;
+	int windowWidth = windowRect.right - windowRect.left;
+	int windowHeight = windowRect.bottom - windowRect.top;
 
 	int cnt = StretchDIBits(deviceContext,
 		/*x, y, width, height,
@@ -131,7 +131,7 @@ LRESULT CALLBACK Win32MainWindowCallback(
 			RECT clientRect;
 			GetClientRect(window, &clientRect);
 			
-			Win32UpdateWindow(deviceContext, &clientRect, x, y, width, height);
+			Win32UpdateWindow(deviceContext, clientRect, x, y, width, height);
 			EndPaint(window, &paint);
 		} break;
 
@@ -200,7 +200,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				GetClientRect(window, &clientRect);
 				int windowWidth = clientRect.right - clientRect.left;
 				int windowHeight = clientRect.bottom - clientRect.top;
-				Win32UpdateWindow(deviceContext, &clientRect, 0, 0, windowWidth, windowHeight);
+				Win32UpdateWindow(deviceContext, clientRect, 0, 0, windowWidth, windowHeight);
 
 				ReleaseDC(window, deviceContext);
 
