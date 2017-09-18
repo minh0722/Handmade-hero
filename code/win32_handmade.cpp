@@ -19,7 +19,7 @@ global_variable int bitmapWidth;
 global_variable int bitmapHeight;
 global_variable int bytesPerPixel = 4;
 
-internal void RenderWeirdGradient(int xOffset, int yOffset)
+internal void RenderWeirdGradient(int blueOffset, int greenOffset)
 {
 	int width = bitmapWidth;
 	int height = bitmapHeight;
@@ -31,8 +31,8 @@ internal void RenderWeirdGradient(int xOffset, int yOffset)
 		uint32* pixel = (uint32*)row;
 		for (int x = 0; x < bitmapWidth; ++x)
 		{
-			uint8 blue = (x + xOffset);
-			uint8 green = (y + yOffset);
+			uint8 blue = (x + blueOffset);
+			uint8 green = (y + greenOffset);
 			*pixel++ = (green << 8) + blue;
 		}
 		row += pitch;
@@ -148,8 +148,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 {
 	WNDCLASS windowClass = {};
 	
-	// TODO: Check if these flags still matter
-	windowClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+	windowClass.style = CS_HREDRAW | CS_VREDRAW;
 	windowClass.lpfnWndProc = Win32MainWindowCallback;
 	windowClass.hInstance = Instance; // or GetModuleHandle(0);
 	//windowClass.hIcon;
@@ -206,6 +205,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				ReleaseDC(window, deviceContext);
 
 				++xOffset;
+				++yOffset;
 			}
 		}
 		else
