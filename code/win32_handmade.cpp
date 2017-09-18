@@ -91,8 +91,7 @@ internal void Win32ResizeDIBSection(win32_offscreen_buffer* buffer, int width, i
 
 internal void Win32DisplayBufferInWindow(HDC deviceContext, 
 										 int windowWidth, int windowHeight,
-										 win32_offscreen_buffer buffer, 
-										 int x, int y, int width, int height)
+										 win32_offscreen_buffer buffer)
 {
 	// TODO: aspect ratio correction
 	StretchDIBits(deviceContext,
@@ -151,7 +150,7 @@ LRESULT CALLBACK Win32MainWindowCallback(
 			
 			win32_window_dimension dimension = Win32GetWindowDimension(window);			
 			Win32DisplayBufferInWindow(deviceContext, dimension.width, dimension.height, 
-										globalBackBuffer, x, y, width, height);
+										globalBackBuffer);
 			EndPaint(window, &paint);
 		} break;
 
@@ -223,7 +222,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				RenderWeirdGradient(globalBackBuffer, xOffset, yOffset);
 								
 				win32_window_dimension dimension = Win32GetWindowDimension(window);
-				Win32DisplayBufferInWindow(deviceContext, dimension.width, dimension.height, globalBackBuffer, 0, 0, dimension.width, dimension.height);
+				Win32DisplayBufferInWindow(deviceContext, dimension.width, dimension.height, globalBackBuffer);
 
 				ReleaseDC(window, deviceContext);
 
