@@ -3,3 +3,9 @@ Day 3:
 - GDI - windows graphics api
 
 - use VirtualProtect() to change the protection of memory pages to MEM_NOACCESS so if there is any stale pointers to that memory and are read or written to, we can track them
+
+- in this code
+	windowClass.lpfnWndProc = Win32MainWindowCallback;
+	windowClass.hInstance = Instance; // or GetModuleHandle(0);
+
+the callback and hInstance is passed to the window class. Windows needs to know which process is holding the function, because that function is in the process's addess space. Every process's address space is different so every pointer does not uniquely identify memory in the system, but in the process. So without the process handle windows will not know which process called the callback. So the hInstance is the actual process that contains the callback address.
