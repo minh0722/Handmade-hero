@@ -94,6 +94,7 @@ internal void Win32DisplayBufferInWindow(HDC deviceContext,
 										 win32_offscreen_buffer buffer, 
 										 int x, int y, int width, int height)
 {
+	// TODO: aspect ratio correction
 	int cnt = StretchDIBits(deviceContext,
 		/*x, y, width, height,
 		x, y, width, height,*/
@@ -118,7 +119,6 @@ LRESULT CALLBACK Win32MainWindowCallback(
 		// when window is resized
 		case WM_SIZE:
 		{
-
 		} break;
 
 		case WM_DESTROY:
@@ -168,7 +168,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 {
 	WNDCLASS windowClass = {};
 
-	// get rect of the window excluding the borders
+	// resize here, not in the WM_RESIZE event
 	Win32ResizeDIBSection(&globalBackBuffer, 1280, 720);
 	
 	windowClass.style = CS_HREDRAW | CS_VREDRAW;
