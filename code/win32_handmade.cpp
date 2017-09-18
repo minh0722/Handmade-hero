@@ -28,7 +28,7 @@ struct win32_window_dimension
 	int height;
 };
 
-global_variable bool running;
+global_variable bool globalRunning;
 global_variable win32_offscreen_buffer globalBackBuffer;
 
 win32_window_dimension Win32GetWindowDimension(HWND window)
@@ -124,13 +124,13 @@ LRESULT CALLBACK Win32MainWindowCallback(
 		case WM_DESTROY:
 		{
 			// TODO: handle this as an error - recreate window?
-			running = false;
+			globalRunning = false;
 		} break;
 
 		case WM_CLOSE:
 		{
 			// TODO: handle this with a message to the user? because we may want to close just an internal window in the game
-			running = false;
+			globalRunning = false;
 		} break;
 
 		// when window becomes the active window
@@ -197,19 +197,19 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 		if (window)
 		{
 			// start message loop
-			running = true;
+			globalRunning = true;
 
 			int xOffset = 0;
 			int yOffset = 0;
 
-			while (running)
+			while (globalRunning)
 			{
 				MSG message;
 				while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
 				{
 					if (message.message == WM_QUIT)
 					{
-						running = false;
+						globalRunning = false;
 					}
 
 					TranslateMessage(&message);
