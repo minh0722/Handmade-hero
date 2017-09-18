@@ -174,7 +174,6 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 		if (window)
 		{
 			// start message loop
-			MSG message;
 			running = true;
 
 			int xOffset = 0;
@@ -182,6 +181,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 
 			while (running)
 			{
+				MSG message;
 				while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
 				{
 					if (message.message == WM_QUIT)
