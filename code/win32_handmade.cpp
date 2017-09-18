@@ -171,7 +171,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 	// resize here, not in the WM_RESIZE event
 	Win32ResizeDIBSection(&globalBackBuffer, 1280, 720);
 	
-	windowClass.style = CS_HREDRAW | CS_VREDRAW;
+	windowClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	windowClass.lpfnWndProc = Win32MainWindowCallback;
 	windowClass.hInstance = Instance; // or GetModuleHandle(0);
 	//windowClass.hIcon;
@@ -196,6 +196,10 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 
 		if (window)
 		{
+			// NOTE: we used CS_OWNDC so we can get one device context and use it
+			// forever because we are not sharing it.
+			HDC deviceContext = GetDC(window);
+
 			// start message loop
 			globalRunning = true;
 
@@ -217,9 +221,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				}
 
 				RenderWeirdGradient(globalBackBuffer, xOffset, yOffset);
-
-				HDC deviceContext = GetDC(window);
-
+								
 				win32_window_dimension dimension = Win32GetWindowDimension(window);
 				Win32DisplayBufferInWindow(deviceContext, dimension.width, dimension.height, globalBackBuffer, 0, 0, dimension.width, dimension.height);
 
