@@ -12,7 +12,9 @@ REM compiling
 cl -FC -Zi ..\code\win32_handmade.cpp user32.lib Gdi32.lib
 
 if %ERRORLEVEL% == 0 (
-	echo Build done!
+	echo Build done successfully!
+) else (
+	echo Build failed!
 )
 
 popd
