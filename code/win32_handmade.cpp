@@ -33,6 +33,9 @@ struct win32_window_dimension
 	int height;
 };
 
+global_variable bool globalRunning;
+global_variable win32_offscreen_buffer globalBackBuffer;
+
 #define X_INPUT_GET_STATE(name) DWORD WINAPI name(DWORD dwUserIndex, XINPUT_STATE* pState)
 typedef X_INPUT_GET_STATE(x_input_get_state);
 X_INPUT_GET_STATE(XInputGetStateStub)
@@ -52,10 +55,12 @@ global_variable x_input_set_state* XInputSetState_ = XInputSetStateStub;
 #define XInputGetState XInputGetState_
 #define XInputSetState XInputSetState_
 
-global_variable bool globalRunning;
-global_variable win32_offscreen_buffer globalBackBuffer;
+internal void Win32LoadXInput()
+{
 
-win32_window_dimension Win32GetWindowDimension(HWND window)
+}
+
+internal win32_window_dimension Win32GetWindowDimension(HWND window)
 {
 	win32_window_dimension result;
 
