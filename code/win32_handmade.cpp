@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <cstdio>
 #include <stdint.h>
+#include <Xinput.h>
 
 #define internal static
 #define local_persist static
@@ -10,6 +11,11 @@ typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
 typedef uint64_t uint64;
+
+typedef int8_t int8;
+typedef int16_t int16;
+typedef int32_t int32;
+typedef int64_t int64;
 
 //TODO: global for now
 struct win32_offscreen_buffer
@@ -26,6 +32,25 @@ struct win32_window_dimension
 	int width;
 	int height;
 };
+
+#define X_INPUT_GET_STATE(name) DWORD WINAPI name(DWORD dwUserIndex, XINPUT_STATE* pState)
+typedef X_INPUT_GET_STATE(x_input_get_state);
+X_INPUT_GET_STATE(XInputGetStateStub)
+{
+	return 0;
+}
+global_variable x_input_get_state* XInputGetState_ = XInputGetStateStub;
+
+#define X_INPUT_SET_STATE(name) DWORD WINAPI name(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
+typedef X_INPUT_SET_STATE(x_input_set_state);
+X_INPUT_SET_STATE(XInputSetStateStub)
+{
+	return 0;
+}
+global_variable x_input_set_state* XInputSetState_ = XInputSetStateStub;
+
+#define XInputGetState XInputGetState_
+#define XInputSetState XInputSetState_
 
 global_variable bool globalRunning;
 global_variable win32_offscreen_buffer globalBackBuffer;
@@ -216,6 +241,41 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 
 					TranslateMessage(&message);
 					DispatchMessage(&message);
+				}
+
+				// poll for xinput
+				// TODO: should we poll this more frequently
+				for (DWORD controllerIndex = 0; controllerIndex < XUSER_MAX_COUNT; ++controllerIndex)
+				{
+					XINPUT_STATE controllerState;
+
+					if (XInputGetState(controllerIndex, &controllerState) == ERROR_SUCCESS)
+					{
+						// controller is plugged in
+						// TODO: see if controllerState.dwPacketNumber increments too rapidly
+
+						XINPUT_GAMEPAD* pad = &controllerState.Gamepad;
+
+						bool up = (pad->wButtons & XINPUT_GAMEPAD_DPAD_UP);
+						bool down= (pad->wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
+						bool left = (pad->wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
+						bool right = (pad->wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
+						bool start = (pad->wButtons & XINPUT_GAMEPAD_START);
+						bool back = (pad->wButtons & XINPUT_GAMEPAD_BACK);
+						bool leftShoulder = (pad->wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER);
+						bool rightShoulder = (pad->wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER);
+						bool AButton = (pad->wButtons & XINPUT_GAMEPAD_A);
+						bool BButtong = (pad->wButtons & XINPUT_GAMEPAD_B);
+						bool XButton = (pad->wButtons & XINPUT_GAMEPAD_X);
+						bool YButton = (pad->wButtons & XINPUT_GAMEPAD_Y);
+
+						int16 stickX = pad->sThumbLX;
+						int16 stickY = pad->sThumbLY;
+					}
+					else
+					{
+						// controller is not available
+					}
 				}
 
 				RenderWeirdGradient(globalBackBuffer, xOffset, yOffset);
