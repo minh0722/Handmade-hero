@@ -174,6 +174,64 @@ LRESULT CALLBACK Win32MainWindowCallback(
 			OutputDebugStringA("WM_ACTIVATEAPP\n");
 		} break;
 
+		case WM_SYSKEYDOWN:
+		case WM_SYSKEYUP:
+		case WM_KEYUP:
+		case WM_KEYDOWN:
+		{
+			uint32 vkCode = wParam;
+			bool wasDown = (lParam & (1 << 30)) != 0;		// 30-th bit tells if key was down
+			bool isDown = (lParam & (1 << 31)) == 0;
+
+			if (vkCode == 'W')
+			{				
+			}
+			else if (vkCode == 'A')
+			{				
+			}
+			else if (vkCode == 'S')
+			{				
+			}
+			else if (vkCode == 'D')
+			{				
+			}
+			else if (vkCode == 'Q')
+			{				
+			}
+			else if (vkCode == 'E')
+			{				
+			}
+			else if (vkCode == VK_UP)
+			{				
+			}
+			else if (vkCode == VK_DOWN)
+			{				
+			}
+			else if (vkCode == VK_LEFT)
+			{				
+			}
+			else if (vkCode == VK_RIGHT)
+			{				
+			}
+			else if (vkCode == VK_ESCAPE)
+			{
+				OutputDebugStringA("ESCAPE ");
+				if (isDown)
+					OutputDebugStringA("isDown");
+				if (wasDown)
+					OutputDebugStringA("wasDown");
+				OutputDebugStringA("\n");
+			}
+			else if (vkCode == VK_SPACE)
+			{
+			}
+			else
+			{
+
+			}
+
+		} break;
+
 		case WM_PAINT:
 		{
 			PAINTSTRUCT paint;
@@ -299,7 +357,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 
 				XINPUT_VIBRATION vibration;
 				vibration.wLeftMotorSpeed = 50000;
-				vibration.wRightMotorSpeed = 10000;
+				vibration.wRightMotorSpeed = 50000;
 				XInputSetState(0, &vibration);
 
 				RenderWeirdGradient(globalBackBuffer, xOffset, yOffset);
