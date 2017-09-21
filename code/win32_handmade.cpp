@@ -57,6 +57,13 @@ global_variable x_input_set_state* XInputSetState_ = XInputSetStateStub;
 
 internal void Win32LoadXInput()
 {
+	HMODULE XInputLibrary = LoadLibrary("xinput1_4.dll");
+
+	if (XInputLibrary)
+	{
+		XInputGetState = (x_input_get_state*)GetProcAddress(XInputLibrary, "XInputGetState");
+		XInputSetState = (x_input_set_state*)GetProcAddress(XInputLibrary, "XInputSetState");
+	}
 
 }
 
@@ -194,6 +201,8 @@ LRESULT CALLBACK Win32MainWindowCallback(
 
 int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLine, int ShowCode)
 {
+	Win32LoadXInput();
+
 	WNDCLASS windowClass = {};
 
 	// resize here, not in the WM_RESIZE event
@@ -276,6 +285,11 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 
 						int16 stickX = pad->sThumbLX;
 						int16 stickY = pad->sThumbLY;
+
+						if (AButton)
+						{
+							++yOffset;
+						}
 					}
 					else
 					{
@@ -291,7 +305,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				ReleaseDC(window, deviceContext);
 
 				++xOffset;
-				++yOffset;
+				//++yOffset;
 			}
 		}
 		else
