@@ -57,7 +57,7 @@ global_variable x_input_set_state* XInputSetState_ = XInputSetStateStub;
 
 internal void Win32LoadXInput()
 {
-	HMODULE XInputLibrary = LoadLibrary("xinput1_4.dll");
+	HMODULE XInputLibrary = LoadLibraryA("xinput1_4.dll");
 
 	if (XInputLibrary)
 	{
@@ -125,18 +125,18 @@ internal void Win32ResizeDIBSection(win32_offscreen_buffer* buffer, int width, i
 	// TODO: clear to black
 }
 
-internal void Win32DisplayBufferInWindow(HDC deviceContext, 
-										 int windowWidth, int windowHeight,
-										 win32_offscreen_buffer buffer)
+internal void Win32DisplayBufferInWindow(win32_offscreen_buffer* buffer,
+										 HDC deviceContext,
+										 int windowWidth, int windowHeight)
 {
 	// TODO: aspect ratio correction
 	StretchDIBits(deviceContext,
 		/*x, y, width, height,
 		x, y, width, height,*/
 		0, 0, windowWidth, windowHeight,
-		0, 0, buffer.width, buffer.height,
-		buffer.memory,
-		&buffer.info,
+		0, 0, buffer->width, buffer->height,
+		buffer->memory,
+		&buffer->info,
 		DIB_RGB_COLORS,
 		SRCCOPY);
 }
@@ -183,51 +183,54 @@ LRESULT CALLBACK Win32MainWindowCallback(
 			bool wasDown = (lParam & (1 << 30)) != 0;		// 30-th bit tells if key was down
 			bool isDown = (lParam & (1 << 31)) == 0;
 
-			if (vkCode == 'W')
-			{				
-			}
-			else if (vkCode == 'A')
-			{				
-			}
-			else if (vkCode == 'S')
-			{				
-			}
-			else if (vkCode == 'D')
-			{				
-			}
-			else if (vkCode == 'Q')
-			{				
-			}
-			else if (vkCode == 'E')
-			{				
-			}
-			else if (vkCode == VK_UP)
-			{				
-			}
-			else if (vkCode == VK_DOWN)
-			{				
-			}
-			else if (vkCode == VK_LEFT)
-			{				
-			}
-			else if (vkCode == VK_RIGHT)
-			{				
-			}
-			else if (vkCode == VK_ESCAPE)
+			if (wasDown != isDown)
 			{
-				OutputDebugStringA("ESCAPE ");
-				if (isDown)
-					OutputDebugStringA("isDown");
-				if (wasDown)
-					OutputDebugStringA("wasDown");
-				OutputDebugStringA("\n");
-			}
-			else if (vkCode == VK_SPACE)
-			{
-			}
-			else
-			{
+				if (vkCode == 'W')
+				{
+				}
+				else if (vkCode == 'A')
+				{
+				}
+				else if (vkCode == 'S')
+				{
+				}
+				else if (vkCode == 'D')
+				{
+				}
+				else if (vkCode == 'Q')
+				{
+				}
+				else if (vkCode == 'E')
+				{
+				}
+				else if (vkCode == VK_UP)
+				{
+				}
+				else if (vkCode == VK_DOWN)
+				{
+				}
+				else if (vkCode == VK_LEFT)
+				{
+				}
+				else if (vkCode == VK_RIGHT)
+				{
+				}
+				else if (vkCode == VK_ESCAPE)
+				{
+					OutputDebugStringA("ESCAPE ");
+					if (isDown)
+						OutputDebugStringA("isDown");
+					if (wasDown)
+						OutputDebugStringA("wasDown");
+					OutputDebugStringA("\n");
+				}
+				else if (vkCode == VK_SPACE)
+				{
+				}
+				else
+				{
 
+				}
 			}
 
 		} break;
@@ -243,8 +246,7 @@ LRESULT CALLBACK Win32MainWindowCallback(
 			int width = paint.rcPaint.right - paint.rcPaint.left;
 			
 			win32_window_dimension dimension = Win32GetWindowDimension(window);			
-			Win32DisplayBufferInWindow(deviceContext, dimension.width, dimension.height, 
-										globalBackBuffer);
+			Win32DisplayBufferInWindow(&globalBackBuffer, deviceContext, dimension.width, dimension.height);
 			EndPaint(window, &paint);
 		} break;
 
@@ -261,7 +263,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 {
 	Win32LoadXInput();
 
-	WNDCLASS windowClass = {};
+	WNDCLASSA windowClass = {};
 
 	// resize here, not in the WM_RESIZE event
 	Win32ResizeDIBSection(&globalBackBuffer, 1280, 720);
@@ -363,7 +365,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				RenderWeirdGradient(globalBackBuffer, xOffset, yOffset);
 								
 				win32_window_dimension dimension = Win32GetWindowDimension(window);
-				Win32DisplayBufferInWindow(deviceContext, dimension.width, dimension.height, globalBackBuffer);
+				Win32DisplayBufferInWindow(&globalBackBuffer, deviceContext, dimension.width, dimension.height);
 
 				ReleaseDC(window, deviceContext);
 
