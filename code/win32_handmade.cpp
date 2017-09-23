@@ -358,20 +358,12 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 					}
 				}
 
-				//XINPUT_VIBRATION vibration;
-				//vibration.wLeftMotorSpeed = 50000;
-				//vibration.wRightMotorSpeed = 50000;
-				//XInputSetState(0, &vibration);
-
 				RenderWeirdGradient(globalBackBuffer, xOffset, yOffset);
 								
 				win32_window_dimension dimension = Win32GetWindowDimension(window);
 				Win32DisplayBufferInWindow(&globalBackBuffer, deviceContext, dimension.width, dimension.height);
 
 				ReleaseDC(window, deviceContext);
-
-				//++xOffset;
-				//++yOffset;
 			}
 		}
 		else
