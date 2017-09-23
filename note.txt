@@ -21,3 +21,7 @@ void Move(int* a, int* b, int* c, int* d)
     *d = 5;	// d might point to b
     *c = *b;    // it must load b again because of the last line
 }
+
+Day 6:
+- the dll requirement of xinput is kinda sketchy, so if we want to load a function from xinput dll and the user doesn't have it, our game just crash. So instead, we can set a function pointer to point to that function if it can find it, else, it just points to a stub function and the game won't crash. If the user doesnt have the api needed to play on a conroller, the game shouldn't crash.
+
